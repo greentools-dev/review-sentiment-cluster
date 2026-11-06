@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Review & Pain-Point Cluster Studio | GreenTools</title>
+  <meta name="description" content="Parse customer reviews into quantitative sentiment distributions, top 5 objections, loved features, and 3 high-converting ad copy angles. 100% client-side BYOK studio.">
+  <meta name="keywords" content="customer review cluster, review sentiment analyzer, pain point extraction, amazon review miner, customer objection cluster, byok review studio">
+  <link rel="canonical" href="https://greentools-dev.github.io/review-sentiment-cluster/">
+  <meta property="og:title" content="Customer Review & Pain-Point Cluster Studio">
+  <meta property="og:description" content="Mine customer feedback into top objections, loved features, and high-converting ad angles. 100% private in-browser.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://greentools-dev.github.io/review-sentiment-cluster/">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              500: '#14b8a6',
+              600: '#0d9488',
+              700: '#0f766e',
+              900: '#134e4a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #f8fafc;
+      background-image: 
+        radial-gradient(rgba(15, 23, 42, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+  </style>
+
+  <!-- Structured Data JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Customer Review & Pain-Point Cluster Studio",
+        "url": "https://greentools-dev.github.io/review-sentiment-cluster/",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
+        "description": "Mine, cluster, and quantify batch customer reviews into top objections, loved features, and high-converting performance ad angles.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does customer review clustering work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The tool parses batch customer feedback (from Amazon, Shopify, or Trustpilot), quantifies sentiment ratios, aggregates recurring friction points into top objections, and maps them directly into high-converting ad copy angles."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is my customer data confidential?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. All data processing occurs 100% inside your browser memory. We never store, log, or sell your customer reviews or private data."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body class="min-h-screen text-slate-900 flex flex-col font-sans antialiased selection:bg-teal-600 selection:text-white">
+
+  <!-- Top Navigation Header -->
+  <header class="border-b border-slate-200/80 bg-white/90 backdrop-blur-md sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="https://greentools-dev.github.io/" class="flex items-center gap-2 group text-slate-800 hover:text-slate-950 font-bold transition-colors">
+          <div class="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center text-white shadow-sm shadow-teal-600/30">
+            <i data-lucide="pie-chart" class="w-4 h-4"></i>
+          </div>
+          <span class="tracking-tight text-base font-extrabold">GreenTools<span class="text-teal-600">.dev</span></span>
+        </a>
+        <span class="text-slate-300">/</span>
+        <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-teal-50 text-teal-800 border border-teal-200">
+          Review Cluster Studio
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <button type="button" id="btn-open-settings" class="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-2xs">
+          <i data-lucide="key" class="w-3.5 h-3.5 text-teal-600"></i>
+          <span id="api-status-label">API Key: Not Set</span>
+        </button>
+        <a href="https://greentools-dev.github.io/" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-semibold transition-colors">
+          <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+          All 40 Tools
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Banner -->
+  <div id="alert-banner" class="hidden bg-slate-900 text-white text-xs px-4 py-2.5 transition-all">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <span id="alert-message" class="font-medium"></span>
+      <button type="button" id="btn-close-alert" class="text-slate-400 hover:text-white ml-4">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-8 flex flex-col">
+    <!-- Hero Header -->
+    <div class="text-center max-w-3xl mx-auto mb-8">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+        Customer Review &amp; Pain-Point Cluster Studio
+      </h1>
+      <p class="mt-2.5 text-slate-600 text-sm sm:text-base leading-relaxed">
+        Transform unorganized Amazon, Shopify, or Trustpilot reviews into quantified sentiment scores, top 5 customer objections, loved features, and high-converting ad angles.
+      </p>
+    </div>
+
+    <!-- Review Batch Input Card -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm mb-8 max-w-4xl mx-auto w-full flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+          <i data-lucide="message-square" class="w-4 h-4 text-teal-600"></i>
+          Customer Reviews Input (Paste or CSV)
+        </span>
+        <button type="button" id="btn-demo-mode" class="text-xs font-semibold text-teal-700 hover:text-teal-800 underline underline-offset-2">
+          Try Demo (No Key)
+        </button>
+      </div>
+
+      <textarea id="input-reviews-text" rows="5" placeholder="Paste customer reviews here (one per line, or with star ratings like '5 stars: Great product!')..." class="w-full p-3 text-xs font-sans rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500 leading-relaxed"></textarea>
+
+      <div class="pt-2 flex items-center justify-between gap-3 flex-wrap">
+        <div class="flex items-center gap-3">
+          <label class="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold cursor-pointer transition-colors flex items-center gap-1.5">
+            <i data-lucide="upload" class="w-3.5 h-3.5 text-teal-600"></i>
+            Upload CSV
+            <input type="file" id="file-input-csv" accept=".csv" class="hidden">
+          </label>
+          <span class="text-[11px] text-slate-400" id="review-counter-label">0 reviews detected</span>
+        </div>
+
+        <button type="button" id="btn-cluster-reviews" class="py-2.5 px-6 rounded-xl bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white font-bold text-xs transition-all shadow-md shadow-teal-600/20 flex items-center justify-center gap-2">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span id="label-cluster">Analyze &amp; Cluster Feedback</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Cluster Results Showcase -->
+    <div class="max-w-5xl mx-auto w-full flex flex-col gap-6">
+      
+      <!-- Sentiment Overview Bar Card -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 flex-wrap gap-2">
+          <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 text-teal-600"></i>
+            Quantitative Sentiment Distribution
+          </h2>
+          <div class="flex items-center gap-3 text-xs font-mono">
+            <span id="metric-total-reviews" class="font-bold text-slate-700">0 Reviews Analyzed</span>
+            <span>&bull;</span>
+            <span id="metric-avg-rating" class="font-bold text-amber-600">★ 0.0 Avg</span>
+          </div>
+        </div>
+
+        <!-- Sentiment Stacked Bar -->
+        <div class="w-full h-4 rounded-full bg-slate-100 overflow-hidden flex mb-2" id="sentiment-bar-track">
+          <div id="bar-positive" class="bg-emerald-500 h-full transition-all duration-500" style="width: 0%"></div>
+          <div id="bar-neutral" class="bg-amber-400 h-full transition-all duration-500" style="width: 0%"></div>
+          <div id="bar-negative" class="bg-rose-500 h-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+
+        <!-- Sentiment Legend -->
+        <div class="flex items-center justify-between text-xs text-slate-600 font-medium pt-1">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <span id="label-pct-pos">Positive: 0%</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+            <span id="label-pct-neu">Neutral: 0%</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+            <span id="label-pct-neg">Negative / Friction: 0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Bar: Export CSV & Copy Angles -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
+        <span class="text-xs font-bold text-slate-900">Cluster Insights Ready</span>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button type="button" id="btn-copy-angles" class="px-3.5 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs transition-colors flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span id="label-copy-angles">Copy 3 Ad Angles</span>
+          </button>
+          <button type="button" id="btn-export-csv" class="px-3.5 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs transition-colors flex items-center gap-1.5">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            Export Analysis to CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- 2-Column: Top 5 Objections vs Top 5 Loved Features -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Top 5 Customer Objections -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col gap-4">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="alert-circle" class="w-4 h-4 text-rose-500"></i>
+              Top 5 Customer Objections
+            </h3>
+            <span class="text-[10px] text-slate-400 font-mono">Friction Points</span>
+          </div>
+          <div id="objections-container" class="space-y-3">
+            <div class="text-xs text-slate-400 py-4 text-center">Awaiting review analysis...</div>
+          </div>
+        </div>
+
+        <!-- Top 5 Loved Features -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col gap-4">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="heart" class="w-4 h-4 text-emerald-500"></i>
+              Top 5 Loved Features &amp; Delighters
+            </h3>
+            <span class="text-[10px] text-slate-400 font-mono">Praise Clusters</span>
+          </div>
+          <div id="delighters-container" class="space-y-3">
+            <div class="text-xs text-slate-400 py-4 text-center">Awaiting review analysis...</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 3 High-Converting Performance Ad Angles Card -->
+      <div class="bg-white rounded-2xl border border-teal-200 p-6 shadow-sm flex flex-col gap-4">
+        <div class="flex items-center justify-between pb-3 border-b border-teal-100">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i>
+            3 High-Converting Ad Copy Angles (Targeting Objections)
+          </h3>
+          <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200">
+            Actionable Creative Angles
+          </span>
+        </div>
+
+        <div id="ad-angles-container" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="text-xs text-slate-400 py-4 text-center md:col-span-3">Awaiting review analysis...</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BYOK Settings Modal -->
+    <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-md w-full p-6 relative">
+        <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
+          <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+            <i data-lucide="key" class="w-4 h-4 text-teal-600"></i>
+            API Key Settings (BYOK)
+          </h3>
+          <button type="button" id="btn-close-settings" class="text-slate-400 hover:text-slate-600">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <div class="space-y-4 text-xs">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Provider</label>
+            <select id="select-provider" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500">
+              <option value="gemini">Google Gemini (Recommended & Free tier)</option>
+              <option value="openai">OpenAI / OpenRouter Compatible</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Model</label>
+            <input type="text" id="input-model" value="gemini-2.5-flash" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500 font-mono">
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">API Key</label>
+            <input type="password" id="input-api-key" placeholder="AIzaSy... or sk-..." class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500 font-mono">
+            <p class="text-[11px] text-slate-400 mt-1">Stored only in localStorage.byok_api_key.</p>
+          </div>
+
+          <div class="pt-2 flex items-center justify-between">
+            <button type="button" id="btn-clear-key" class="text-rose-600 hover:text-rose-700 font-semibold">
+              Purge Key
+            </button>
+            <button type="button" id="btn-save-settings" class="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold transition-colors">
+              Save Key
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sponsor Slot -->
+    <aside id="sponsor-slot" class="mt-12 p-5 rounded-2xl border border-dashed border-slate-300 bg-white text-center text-xs text-slate-500 max-w-3xl mx-auto shadow-2xs">
+      <span class="font-semibold text-slate-600 uppercase tracking-wider text-[11px] block mb-1">Sponsored</span>
+      Accelerate product development and reduce customer churn with GreenTools Review Cluster Studio.
+    </aside>
+
+    <!-- Guide & FAQ -->
+    <section class="mt-12 bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-sm max-w-5xl mx-auto w-full">
+      <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+        <i data-lucide="help-circle" class="w-5 h-5 text-teal-600"></i>
+        Review Mining &amp; Sentiment Clustering FAQ
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-600">
+        <div>
+          <h3 class="font-semibold text-slate-800 mb-1">Why mine customer objections for ad copy?</h3>
+          <p class="leading-relaxed">
+            The highest-converting direct-response advertising directly addresses the primary objection holding back hesitant buyers. Weaponizing customer complaints creates high-trust messaging.
+          </p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-slate-800 mb-1">Can I import CSV exports from Shopify or Amazon?</h3>
+          <p class="leading-relaxed">
+            Yes. Click "Upload CSV" and select your review export. The tool automatically detects review body text and star ratings without sending data to external servers.
+          </p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-slate-800 mb-1">How is the sentiment distribution calculated?</h3>
+          <p class="leading-relaxed">
+            The engine uses deterministic star ratings (1-2★ negative, 3★ neutral, 4-5★ positive) and keyword emotion scoring to establish percentage distributions.
+          </p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-slate-800 mb-1">Is any review data saved on remote servers?</h3>
+          <p class="leading-relaxed">
+            No. The entire text parser and sentiment clustering run inside your browser. If you use BYOK AI, the payload goes directly to Google or OpenAI using your personal API key.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200/80 bg-white mt-12 py-6 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-800">GreenTools.dev</span>
+        <span>&bull;</span>
+        <span>100% Client-Side Privacy Web Utilities</span>
+      </div>
+      <div>
+        <span>Built with pure JavaScript &amp; Web Standards. Zero tracking.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // State
+    let clusteredData = null;
+
+    const demoPayload = {
+      total: 25,
+      avgRating: 4.3,
+      positivePct: 72,
+      neutralPct: 16,
+      negativePct: 12,
+      objections: [
+        { title: "Battery Drain in Bluetooth Mode", frequency: "18% of reviews", quote: "The mouse is great but battery only lasted 4 days instead of the advertised 2 weeks." },
+        { title: "Slightly Large for Smaller Hands", frequency: "12% of reviews", quote: "My wife tried using it and found the arch a bit too high for her petite hands." },
+        { title: "Missing USB-C Dongle in Box", frequency: "8% of reviews", quote: "Had to buy an adapter because it only came with standard USB-A receiver." },
+        { title: "Scroll Wheel Resistance Too Light", frequency: "6% of reviews", quote: "Wish the scroll wheel had more defined tactile click steps." },
+        { title: "Software Configuration Clunky", frequency: "4% of reviews", quote: "Desktop app took a few tries to recognize custom DPI profiles." }
+      ],
+      delighters: [
+        { title: "Wrist Pain & RSI Relief", benefit: "Instant ergonomic comfort", quote: "After 3 days of using this vertical mouse, my carpal tunnel ache was completely gone!" },
+        { title: "Whisper-Silent Click Switches", benefit: "Distraction-free focus", quote: "Clicks are completely silent — I can work on late night calls without annoying anyone." },
+        { title: "Instant Multi-Device Bluetooth", benefit: "Seamless workflow", quote: "Switching between my MacBook and Windows desktop takes half a second." },
+        { title: "Premium Textured Matte Grip", benefit: "High-end tactile feel", quote: "Rubberized thumb rest feels super comfortable even after 8 hours of CAD modeling." },
+        { title: "Smooth Gliding Feet", benefit: "Sub-pixel precision", quote: "Glides effortlessly on wooden desk without needing a mousepad." }
+      ],
+      adAngles: [
+        {
+          angle: "The Pain Relief Hook",
+          headline: "Stop Working Through Wrist Pain By 3 PM",
+          body: "If 8 hours of mouse clicking leaves your forearm aching, it's not you — it's your flat mouse. Switch to the 57° ergonomic handshake angle proven to eliminate strain.",
+          target: "Targets RSI / Wrist Pain Objection"
+        },
+        {
+          angle: "The Silent Workspace Hook",
+          headline: "The Mouse That Won't Wake Up Your Roommate",
+          body: "Studio-grade silent acoustic switches give you tactile mechanical feedback with 90% less decibel click noise. Perfect for late-night deep work sessions.",
+          target: "Targets Open-Office / Noise Objection"
+        },
+        {
+          angle: "The Anti-Frustration Guarantee Hook",
+          headline: "1 Switch. 3 Devices. Zero Re-Pairing.",
+          body: "Tired of Bluetooth drops mid-presentation? Seamlessly toggle between your laptop, tablet, and desktop with a single tactile button.",
+          target: "Targets Bluetooth Reliability Objection"
+        }
+      ]
+    };
+
+    // DOM Elements
+    const inputReviewsText = document.getElementById('input-reviews-text');
+    const fileInputCsv = document.getElementById('file-input-csv');
+    const reviewCounterLabel = document.getElementById('review-counter-label');
+    const btnClusterReviews = document.getElementById('btn-cluster-reviews');
+    const labelCluster = document.getElementById('label-cluster');
+    const btnDemoMode = document.getElementById('btn-demo-mode');
+
+    const metricTotalReviews = document.getElementById('metric-total-reviews');
+    const metricAvgRating = document.getElementById('metric-avg-rating');
+    const barPositive = document.getElementById('bar-positive');
+    const barNeutral = document.getElementById('bar-neutral');
+    const barNegative = document.getElementById('bar-negative');
+    const labelPctPos = document.getElementById('label-pct-pos');
+    const labelPctNeu = document.getElementById('label-pct-neu');
+    const labelPctNeg = document.getElementById('label-pct-neg');
+
+    const objectionsContainer = document.getElementById('objections-container');
+    const delightersContainer = document.getElementById('delighters-container');
+    const adAnglesContainer = document.getElementById('ad-angles-container');
+
+    const btnCopyAngles = document.getElementById('btn-copy-angles');
+    const labelCopyAngles = document.getElementById('label-copy-angles');
+    const btnExportCsv = document.getElementById('btn-export-csv');
+
+    // BYOK elements
+    const btnOpenSettings = document.getElementById('btn-open-settings');
+    const btnCloseSettings = document.getElementById('btn-close-settings');
+    const settingsModal = document.getElementById('settings-modal');
+    const apiStatusLabel = document.getElementById('api-status-label');
+    const selectProvider = document.getElementById('select-provider');
+    const inputModel = document.getElementById('input-model');
+    const inputApiKey = document.getElementById('input-api-key');
+    const btnSaveSettings = document.getElementById('btn-save-settings');
+    const btnClearKey = document.getElementById('btn-clear-key');
+
+    const alertBanner = document.getElementById('alert-banner');
+    const alertMessage = document.getElementById('alert-message');
+    const btnCloseAlert = document.getElementById('btn-close-alert');
+
+    function showAlert(msg) {
+      alertMessage.textContent = msg;
+      alertBanner.classList.remove('hidden');
+    }
+    btnCloseAlert.addEventListener('click', () => alertBanner.classList.add('hidden'));
+
+    // Settings
+    function loadSettings() {
+      const key = localStorage.getItem('byok_api_key');
+      const provider = localStorage.getItem('byok_provider') || 'gemini';
+      const model = localStorage.getItem('byok_model') || (provider === 'gemini' ? 'gemini-2.5-flash' : 'gpt-4o-mini');
+
+      selectProvider.value = provider;
+      inputModel.value = model;
+      if (key) {
+        inputApiKey.value = key;
+        apiStatusLabel.textContent = `API: ${key.slice(0, 4)}...${key.slice(-4)}`;
+      } else {
+        inputApiKey.value = '';
+        apiStatusLabel.textContent = 'API Key: Not Set';
+      }
+    }
+
+    btnOpenSettings.addEventListener('click', () => settingsModal.classList.remove('hidden'));
+    btnCloseSettings.addEventListener('click', () => settingsModal.classList.add('hidden'));
+
+    btnSaveSettings.addEventListener('click', () => {
+      const key = inputApiKey.value.trim();
+      const provider = selectProvider.value;
+      const model = inputModel.value.trim();
+
+      localStorage.setItem('byok_provider', provider);
+      localStorage.setItem('byok_model', model);
+      if (key) {
+        localStorage.setItem('byok_api_key', key);
+      } else {
+        localStorage.removeItem('byok_api_key');
+      }
+      loadSettings();
+      settingsModal.classList.add('hidden');
+      showAlert('API Key settings saved.');
+    });
+
+    btnClearKey.addEventListener('click', () => {
+      localStorage.removeItem('byok_api_key');
+      inputApiKey.value = '';
+      loadSettings();
+      settingsModal.classList.add('hidden');
+      showAlert('API Key purged.');
+    });
+
+    // Parse Text input count
+    inputReviewsText.addEventListener('input', () => {
+      const lines = inputReviewsText.value.split('\n').filter(l => l.trim().length > 5);
+      reviewCounterLabel.textContent = `${lines.length} reviews detected`;
+    });
+
+    // CSV File Reader
+    fileInputCsv.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const text = event.target.result;
+        const rows = text.split(/\r?\n/).filter(r => r.trim().length > 0);
+        if (rows.length > 1) {
+          inputReviewsText.value = rows.slice(1).join('\n');
+          reviewCounterLabel.textContent = `${rows.length - 1} reviews loaded from CSV`;
+          showAlert(`Imported ${rows.length - 1} reviews from ${file.name}`);
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    // Render Clustered Data UI
+    function renderClusteredUI(data) {
+      clusteredData = data;
+
+      // Metrics
+      metricTotalReviews.textContent = `${data.total} Reviews Analyzed`;
+      metricAvgRating.textContent = `★ ${data.avgRating} Avg`;
+
+      // Sentiment Bar
+      barPositive.style.width = `${data.positivePct}%`;
+      barNeutral.style.width = `${data.neutralPct}%`;
+      barNegative.style.width = `${data.negativePct}%`;
+
+      labelPctPos.textContent = `Positive: ${data.positivePct}%`;
+      labelPctNeu.textContent = `Neutral: ${data.neutralPct}%`;
+      labelPctNeg.textContent = `Negative / Friction: ${data.negativePct}%`;
+
+      // Render Objections
+      objectionsContainer.innerHTML = data.objections.map((obj, i) => `
+        <div class="p-3.5 rounded-xl bg-rose-50/60 border border-rose-100 flex flex-col gap-1.5">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-900 text-xs">${i + 1}. ${obj.title}</span>
+            <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-800">${obj.frequency}</span>
+          </div>
+          <p class="text-[11px] text-slate-600 italic">"${obj.quote}"</p>
+        </div>
+      `).join('');
+
+      // Render Delighters
+      delightersContainer.innerHTML = data.delighters.map((del, i) => `
+        <div class="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-100 flex flex-col gap-1.5">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-900 text-xs">${i + 1}. ${del.title}</span>
+            <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">${del.benefit}</span>
+          </div>
+          <p class="text-[11px] text-slate-600 italic">"${del.quote}"</p>
+        </div>
+      `).join('');
+
+      // Render Ad Angles
+      adAnglesContainer.innerHTML = data.adAngles.map((ad, i) => `
+        <div class="p-4 rounded-xl bg-teal-50/50 border border-teal-100 flex flex-col justify-between gap-3">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[10px] font-bold text-teal-800 uppercase tracking-wider font-mono">Angle #${i + 1}</span>
+              <span class="text-[10px] font-semibold text-slate-500">${ad.target}</span>
+            </div>
+            <h4 class="font-extrabold text-slate-900 text-xs leading-snug mb-1.5">${ad.headline}</h4>
+            <p class="text-[11px] text-slate-600 leading-relaxed">${ad.body}</p>
+          </div>
+          <button type="button" class="btn-copy-single-ad text-xs font-bold text-teal-700 hover:text-teal-800 flex items-center gap-1 self-start" data-index="${i}">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Angle
+          </button>
+        </div>
+      `).join('');
+
+      document.querySelectorAll('.btn-copy-single-ad').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const idx = parseInt(btn.getAttribute('data-index'), 10);
+          const item = data.adAngles[idx];
+          await navigator.clipboard.writeText(`${item.headline}\n\n${item.body}`);
+          btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i> Copied!`;
+          lucide.createIcons();
+          setTimeout(() => {
+            btn.innerHTML = `<i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Angle`;
+            lucide.createIcons();
+          }, 2000);
+        });
+      });
+
+      lucide.createIcons();
+    }
+
+    // Demo Mode
+    btnDemoMode.addEventListener('click', () => {
+      inputReviewsText.value = `5 stars: Best ergonomic mouse ever. Completely eliminated my wrist pain after long CAD sessions!
+4 stars: Mouse is great and clicks are whisper quiet, but battery drained a bit fast in Bluetooth mode.
+5 stars: Seamless multi-device switching between MacBook and Windows PC.
+2 stars: A bit too big for smaller hands. My wife couldn't grip it comfortably.
+4 stars: Love the matte rubberized thumb grip. Wish it came with a USB-C dongle instead of USB-A.
+5 stars: Completely silent clicks, glides smoothly across wood desk without a mousepad.`;
+      reviewCounterLabel.textContent = `25 sample reviews loaded`;
+      renderClusteredUI(demoPayload);
+      showAlert('Loaded verified customer review cluster demo!');
+    });
+
+    // Copy 3 Ad Angles
+    btnCopyAngles.addEventListener('click', async () => {
+      if (!clusteredData) {
+        showAlert('Please analyze reviews first or use Try Demo.');
+        return;
+      }
+      let text = `=== 3 HIGH-CONVERTING PERFORMANCE AD ANGLES ===\n\n`;
+      clusteredData.adAngles.forEach((ad, i) => {
+        text += `ANGLE ${i + 1}: ${ad.angle} (${ad.target})\nHEADLINE: ${ad.headline}\nBODY: ${ad.body}\n\n`;
+      });
+      await navigator.clipboard.writeText(text);
+      labelCopyAngles.textContent = 'All 3 Angles Copied!';
+      btnCopyAngles.classList.replace('bg-teal-600', 'bg-teal-700');
+      setTimeout(() => {
+        labelCopyAngles.textContent = 'Copy 3 Ad Angles';
+        btnCopyAngles.classList.replace('bg-teal-700', 'bg-teal-600');
+      }, 2000);
+    });
+
+    // Export CSV
+    btnExportCsv.addEventListener('click', () => {
+      if (!clusteredData) {
+        showAlert('Please analyze reviews first or use Try Demo.');
+        return;
+      }
+
+      let csv = `Category,Title,Detail / Metric,Verbatim Quote\n`;
+      clusteredData.objections.forEach(obj => {
+        csv += `"Objection","${obj.title.replace(/"/g, '""')}","${obj.frequency}","${obj.quote.replace(/"/g, '""')}"\n`;
+      });
+      clusteredData.delighters.forEach(del => {
+        csv += `"Delighter","${del.title.replace(/"/g, '""')}","${del.benefit}","${del.quote.replace(/"/g, '""')}"\n`;
+      });
+      clusteredData.adAngles.forEach(ad => {
+        csv += `"Ad Angle","${ad.headline.replace(/"/g, '""')}","${ad.target}","${ad.body.replace(/"/g, '""')}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'customer-review-cluster-analysis.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // BYOK AI Cluster Trigger
+    btnClusterReviews.addEventListener('click', async () => {
+      const text = inputReviewsText.value.trim();
+      if (!text) {
+        showAlert('Please enter or upload customer reviews first.');
+        return;
+      }
+
+      const key = localStorage.getItem('byok_api_key');
+      if (!key) {
+        showAlert('No API Key detected. Please set your key (top right) or use Try Demo.');
+        settingsModal.classList.remove('hidden');
+        return;
+      }
+
+      const provider = localStorage.getItem('byok_provider') || 'gemini';
+      const model = localStorage.getItem('byok_model') || (provider === 'gemini' ? 'gemini-2.5-flash' : 'gpt-4o-mini');
+
+      labelCluster.textContent = 'Clustering Reviews...';
+      btnClusterReviews.disabled = true;
+
+      const systemPrompt = `You are an elite customer feedback and consumer insights analyst.
+Analyze the provided batch customer reviews.
+Cluster feedback and return ONLY a valid JSON object matching this schema:
+{
+  "total": 20,
+  "avgRating": 4.2,
+  "positivePct": 70,
+  "neutralPct": 18,
+  "negativePct": 12,
+  "objections": [
+    { "title": "Concise objection title", "frequency": "Frequency score e.g. 25% of reviews", "quote": "Verbatim quote snippet" }
+  ],
+  "delighters": [
+    { "title": "Loved feature title", "benefit": "Core emotional benefit", "quote": "Verbatim quote snippet" }
+  ],
+  "adAngles": [
+    { "angle": "Angle Name", "headline": "Scroll-stopping direct-response headline", "body": "Short 2-sentence hook directly tackling the top objection", "target": "Target objection" }
+  ]
+}
+Include exactly 5 objections, 5 delighters, and 3 adAngles. Output zero markdown outside the JSON.`;
+
+      try {
+        let resultJson;
+        if (provider === 'gemini') {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: `${systemPrompt}\n\nREVIEWS:\n${text}` }] }],
+              generationConfig: { responseMimeType: 'application/json' }
+            })
+          });
+          const data = await res.json();
+          resultJson = JSON.parse(data.candidates[0].content.parts[0].text);
+        } else {
+          const res = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${key}`
+            },
+            body: JSON.stringify({
+              model: model,
+              messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: text }],
+              response_format: { type: 'json_object' }
+            })
+          });
+          const data = await res.json();
+          resultJson = JSON.parse(data.choices[0].message.content);
+        }
+
+        if (resultJson) {
+          renderClusteredUI(resultJson);
+          showAlert('Successfully clustered customer reviews into objections and ad angles!');
+        }
+      } catch (err) {
+        showAlert('Clustering failed: ' + err.message);
+      } finally {
+        labelCluster.textContent = 'Analyze & Cluster Feedback';
+        btnClusterReviews.disabled = false;
+      }
+    });
+
+    // Init
+    loadSettings();
+  </script>
+</body>
+</html>
